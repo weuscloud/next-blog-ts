@@ -1,0 +1,6 @@
+{
+    "SignIn":"/api/auth/in",
+    "SignOut":"/api/auth/out",
+    "home":"/",
+    "Search":"/api/search"
+}
