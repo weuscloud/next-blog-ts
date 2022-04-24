@@ -1,10 +1,13 @@
+import Layout from "../components/layout";
+import Head from "next/head";
 import useTranslation from 'next-translate/useTranslation';
-import { Button } from 'antd';
 export default function Index(){
-    const { t } = useTranslation('common');
-    return (
-        <div>
-             <Button className='mx-6' type="primary">{t('test')}</Button>
-        </div>
-    )
+  const { t } = useTranslation('common');
+  return (
+    <Layout>
+      <Head>
+        <title>{t('title-index')}</title>
+      </Head>
+    </Layout>
+  )
 }

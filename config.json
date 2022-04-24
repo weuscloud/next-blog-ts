@@ -1,0 +1,15 @@
+{
+    "GitHub":"https://github.com/weuscloud/next-blog-ts",
+    "RECORD":"滇ICP备2022xxxxxx号",
+    "links":{
+        "signIn":"/api/auth/signin",
+        "signOut":"/api/auth/signout",
+        "home":"/",
+        "search":"/api/search",
+        "articles":"/posts",
+        "about":"/about",
+        "profile":"/user/profile",
+        "settings":"/app/settings",
+        "message":"/user/message"
+    }
+}
