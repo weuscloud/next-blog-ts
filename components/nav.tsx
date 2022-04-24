@@ -35,14 +35,14 @@ export default function NavBar() {
         <>
           <Container>
             <div className="relative flex items-center justify-between h-16">
-              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden duration-300">
                 {/* Mobile menu button*/}
-                <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 ">
+                <Disclosure.Button className=" inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 ">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
-                    <XIcon className="block h-8 w-8" aria-hidden="true" />
+                    <XIcon className="block h-6 w-6" aria-hidden="true" />
                   ) : (
-                    <MenuIcon className="block h-8 w-8" aria-hidden="true" />
+                    <MenuIcon className="block h-6 w-6" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
               </div>
@@ -155,9 +155,7 @@ export default function NavBar() {
               </Link>
               </div>)}
             </div>
-          </Container>
-
-          <Disclosure.Panel className="sm:hidden">
+            <Disclosure.Panel className="sm:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {NAV.navigation.map((item) => (
                 <Disclosure.Button
@@ -175,6 +173,9 @@ export default function NavBar() {
               ))}
             </div>
           </Disclosure.Panel>
+          </Container>
+
+          
         </>
       )}
     </Disclosure>
