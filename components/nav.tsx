@@ -1,4 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
 import cn from 'classnames'
 import { Fragment, useContext } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -9,26 +8,25 @@ import Container from './container'
 import { useSession } from "next-auth/react"
 import useTranslation from 'next-translate/useTranslation'
 import AppContext from '../lib/AppContext'
-
 export default function NavBar() {
-  const appConfig=useContext(AppContext)
-  const {t}=useTranslation("nav");
+  const appConfig = useContext(AppContext)
+  const { t } = useTranslation("nav");
   const { data: session } = useSession()
   const NAV = {
     navigation: [
       { name: 'articles', href: `${appConfig.links.articles}`, current: false },
-      { name: 'about', href:`${appConfig.links.about}`, current: false },
+      { name: 'about', href: `${appConfig.links.about}`, current: false },
     ],
     navUser: [
-      { name: 'profile', href: `${appConfig.links.profile}`},
+      { name: 'profile', href: `${appConfig.links.profile}` },
       { name: 'settings', href: `${appConfig.links.settings}` },
-      { name: 'sign out', href: `${appConfig.links.signOut}`  },
+      { name: 'sign out', href: `${appConfig.links.signOut}` },
     ],
-    signIn: `${appConfig.links.signIn}` ,
-    msg: `${appConfig.links.message}` ,
-  
+    signIn: `${appConfig.links.signIn}`,
+    msg: `${appConfig.links.message}`,
+
   }
-  
+
   return (
     <Disclosure as="nav" className="bg-gray-800 fixed min-w-full top-0 z-10 ">
       {({ open }) => (
@@ -92,7 +90,7 @@ export default function NavBar() {
                   </div>
                 </div>
               </div>
-              {session &&(session.user?.email||session.user?.name)? (<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              {session && (session.user?.email || session.user?.name) ? (<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <button
                   type="button"
                   className="hidden md:block bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
@@ -100,26 +98,28 @@ export default function NavBar() {
 
                   <Link href={NAV.msg}>
                     <a >
-                    <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                      <span className="sr-only">View notifications</span>
+                      <BellIcon className="h-6 w-6" aria-hidden="true" />
                     </a>
 
                   </Link>
-                 
+
                 </button>
 
                 {/* Profile dropdown */}
                 <Menu as="div" className="ml-3 relative z-10 ">
                   <div>
-                    <Menu.Button className="bg-gray-800 flex text-sm rounded-full">
+                    <Menu.Button className="bg-gray-800 flex text-sm ">
                       <span className="sr-only">Open user menu</span>
+                      <div className="h-6 w-6 opacity-90 duration-300 hover:opacity-100">
                       <Image
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 rounded-full"
-                        src={session.user.image||''}
+                       layout='fill'
+                       className='rounded-full'
+                        src={session.user.image||'/user/default.png'}
                         alt="Personal Info"
                       />
+                      </div>
+                      
                     </Menu.Button>
                   </div>
                   <Transition
@@ -133,49 +133,49 @@ export default function NavBar() {
                   >
                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 ">
                       {NAV.navUser.map(item => (
-                       <Menu.Item key={item.name}>
+                        <Menu.Item key={item.name}>
                           <Link
-                          key={item.name}
-                          href={item.href}>
-                          <a
-                            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 '
-                          >
-                            {t(item.name)}
-                          </a>
-                        </Link>
-                       </Menu.Item>
+                            key={item.name}
+                            href={item.href}>
+                            <a
+                              className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 '
+                            >
+                              {t(item.name)}
+                            </a>
+                          </Link>
+                        </Menu.Item>
                       ))}
                     </Menu.Items>
                   </Transition>
                 </Menu>
               </div>) : (
-              <div className='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
-                <Link href={NAV.signIn}>
-                <a className=' px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md'>Sign In</a>
-              </Link>
-              </div>)}
+                <div className='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
+                  <Link href={NAV.signIn}>
+                    <a className=' px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md'>Sign In</a>
+                  </Link>
+                </div>)}
             </div>
             <Disclosure.Panel className="sm:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {NAV.navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  className={cn(
-                    item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    'block px-3 py-2 rounded-md text-base font-medium'
-                  )}
-                  aria-current={item.current ? 'page' : undefined}
-                >
-                 {t(item.name)}
-                </Disclosure.Button>
-              ))}
-            </div>
-          </Disclosure.Panel>
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                {NAV.navigation.map((item) => (
+                  <Disclosure.Button
+                    key={item.name}
+                    as="a"
+                    href={item.href}
+                    className={cn(
+                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      'block px-3 py-2 rounded-md text-base font-medium'
+                    )}
+                    aria-current={item.current ? 'page' : undefined}
+                  >
+                    {t(item.name)}
+                  </Disclosure.Button>
+                ))}
+              </div>
+            </Disclosure.Panel>
           </Container>
 
-          
+
         </>
       )}
     </Disclosure>
