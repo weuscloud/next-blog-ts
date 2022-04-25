@@ -12,6 +12,7 @@ export default function NavBar() {
   const appConfig = useContext(AppContext)
   const { t } = useTranslation("nav");
   const { data: session } = useSession()
+
   const NAV = {
     navigation: [
       { name: 'articles', href: `${appConfig.links.articles}`, current: false },
@@ -111,7 +112,7 @@ export default function NavBar() {
                   <div>
                     <Menu.Button className="bg-gray-800 flex text-sm ">
                       <span className="sr-only">Open user menu</span>
-                      <div className="h-6 w-6 opacity-90 duration-300 hover:opacity-100">
+                      <div className="relative h-6 w-6 opacity-90 duration-300 hover:opacity-100">
                       <Image
                        layout='fill'
                        className='rounded-full'
