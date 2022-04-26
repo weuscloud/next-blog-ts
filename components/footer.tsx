@@ -12,7 +12,7 @@ const appConfig=useContext(AppContext)
       <Container>
         <div className="py-28 flex flex-col lg:flex-row items-center">
           <h3 className="text-4xl lg:text-5xl font-bold tracking-tighter leading-tight text-center lg:text-left mb-10 lg:mb-0 lg:pr-4 lg:w-1/2">
-            {t('description')}
+            {t('common:description')}
           </h3>
           <div className="flex flex-col lg:flex-row justify-center items-center lg:pl-4 lg:w-1/2">
             <a
@@ -21,7 +21,7 @@ const appConfig=useContext(AppContext)
             >
               {t('Read Documentation')}
             </a>
-            {router.locale==='zh'?(<a
+            {router.locale==='zh-CN'?(<a
               href='https://beian.miit.gov.cn/'
               className="mx-3 font-bold hover:underline"
             >

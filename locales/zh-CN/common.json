@@ -1,3 +1,6 @@
 {
-    "title-index": "博客-主页"
+    "title-index": "博客-主页",
+    "description":"Next,Tailwind CSS,Antd,Markdown 博客",
+    "title-page-posts-new":"添加文章-NextJs博客",
+    "keywords":"Next,Tailwind CSS,Antd,Markdown"
 }
