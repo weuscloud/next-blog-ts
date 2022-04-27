@@ -21,7 +21,9 @@ Router.events.on("routeChangeComplete", nProgress.done);
 
 //Add custom auth type with using union in type
 type CustomAppProps = AppProps & {
-  Component: NextComponentType & { auth?: boolean };
+  Component: NextComponentType & {
+    auth?: boolean,
+  };
 };
 
 function MyApp({
