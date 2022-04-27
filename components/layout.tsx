@@ -7,6 +7,7 @@ import Meta from "./meta";
 export default function Layout({ children }: ComponentProps) {
   return (
     <>
+    <Meta/>
       <div className="min-h-screen bg-gray-0">
         <div className="h-16">
           <Nav></Nav>
