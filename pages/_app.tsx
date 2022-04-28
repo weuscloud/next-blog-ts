@@ -1,6 +1,8 @@
-import "../styles/globals.css";
+
 import "antd/dist/antd.min.css";
 import "../styles/nprogress.css";
+
+import "../styles/globals.css";
 
 import type { AppProps } from "next/app";
 import Router from "next/router";

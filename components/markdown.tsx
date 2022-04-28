@@ -1,33 +1,37 @@
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { vs as theme } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-import { vscDarkPlus as themeDark } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+import { nord as theme } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-export default function MarkDown({markdown='',dark}:{markdown?:string,dark?:boolean}) {
+import cn from 'classnames'
+import styles from './markdown.module.css'
+export default function MarkDown({ dark, children = "" }: { children?: string, dark?: boolean }) {
     return (
-        <ReactMarkdown
-        rehypePlugins={[rehypeRaw]}
-        remarkPlugins={[remarkGfm]} 
-            components={{
-                code({ node, inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || '')
-                    return !inline && match ? (
-                        <SyntaxHighlighter
-                            style={dark===true?themeDark:theme}
-                            language={match[1]}
-                            PreTag="div"
-                            {...props}
-                        >{String(children).replace(/\n$/, '')}
-                        </SyntaxHighlighter>
-                    ) : (
-                        <code className={className} {...props}>
-                            {children}
-                        </code>
-                    )
-                }
-            }}
-        >{markdown}
-        </ReactMarkdown>
+        <div className={cn("w-100 w-full",styles.markdown,dark ? styles.dark : styles.white)}>
+            <ReactMarkdown
+            
+                rehypePlugins={[rehypeRaw]}
+                remarkPlugins={[remarkGfm]}
+                components={{
+                    code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '')
+                        return !inline && match ? (
+                            <SyntaxHighlighter
+                                style={theme}
+                                language={match[1]}
+                                PreTag="div"
+                                {...props}
+                            >{String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                        ) : (
+                            <code className={className} {...props}>
+                                {children}
+                            </code>
+                        )
+                    }
+                }}
+            >{children}
+            </ReactMarkdown>
+        </div>
     )
 }

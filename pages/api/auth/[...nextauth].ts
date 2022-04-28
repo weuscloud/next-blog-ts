@@ -7,7 +7,7 @@ export default NextAuth({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
       httpOptions: {
-        timeout: 4000,
+        timeout: 5000,
       },
     }),
     //more providers
