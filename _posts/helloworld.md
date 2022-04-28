@@ -1,184 +1,782 @@
----
-title: Choosing a tech stack for my personal dev blog in 2020
-description: I recently set out to build my personal website — the one you're reading now, as it happens!
-published: true
-datePublished: 1590463136775
-author: Colin McDonnell
-authorTwitter: colinhacks
-authorPhoto: /img/profile.jpg
-tags:
-  - Static Site Generators
-  - React
-  - Next.js
-thumbnailPhoto: /img/pancakes_thumb.jpeg
-bannerPhoto: /img/pancakes.jpeg
-canonicalUrl: https://colinhacks.com/essays/devii
----
+<!--
+Notes for maintaining this document:
 
-> Originally published at [https://colinhacks.com/essays/devii](https://colinhacks.com/essays/devii). Check out the HN <del>roast</del> discussion <a href="https://news.ycombinator.com/item?id=23309002">here</a>! 🤗
+*   Update the link for `cm-html` once in a while
+-->
 
-I recently set out to build my personal website — the one you're reading now, as it happens!
+# react-markdown
 
-Surprisingly, it was much harder than expected to put together a "tech stack" that met my criteria. My criteria are pretty straightforward; I would expect most React devs to have a similar list. Yet it was surprisingly hard to put all these pieces together.
+[![Build][build-badge]][build]
+[![Coverage][coverage-badge]][coverage]
+[![Downloads][downloads-badge]][downloads]
+[![Size][size-badge]][size]
+[![Sponsors][sponsors-badge]][collective]
+[![Backers][backers-badge]][collective]
+[![Chat][chat-badge]][chat]
 
-Given the lack of a decent out-of-the-box solution, I worry that many developers are settling for static-site generators that place limits on the interactivity and flexibility of your website. We can do better.
+React component to render markdown.
 
-> Clone the repo here to get started with this setup: https://github.com/colinhacks/devii
+## Feature highlights
 
-Let's quickly run through my list of design goals:
+*   [x] **[safe][security] by default**
+    (no `dangerouslySetInnerHTML` or XSS attacks)
+*   [x] **[components][]**
+    (pass your own component to use instead of `<h2>` for `## hi`)
+*   [x] **[plugins][]**
+    (many plugins you can pick and choose from)
+*   [x] **[compliant][syntax]**
+    (100% to CommonMark, 100% to GFM with a plugin)
 
-### React (+ TypeScript)
+## Contents
 
-I want to build the site with React and TypeScript. I love them both wholeheartedly, I use them for my day job, and they're gonna be around for a long time. Plus writing untyped JS makes me feel dirty.
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+    *   [`props`](#props)
+    *   [`uriTransformer`](#uritransformer)
+*   [Examples](#examples)
+    *   [Use a plugin](#use-a-plugin)
+    *   [Use a plugin with options](#use-a-plugin-with-options)
+    *   [Use custom components (syntax highlight)](#use-custom-components-syntax-highlight)
+    *   [Use remark and rehype plugins (math)](#use-remark-and-rehype-plugins-math)
+*   [Plugins](#plugins)
+*   [Syntax](#syntax)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Architecture](#architecture)
+*   [Appendix A: HTML in markdown](#appendix-a-html-in-markdown)
+*   [Appendix B: Components](#appendix-b-components)
+*   [Security](#security)
+*   [Related](#related)
+*   [Contribute](#contribute)
+*   [License](#license)
 
-I don't want limitations on what my personal website can be/become. Sure, at present my site consists of two simple, static blog posts. But down the road, I may want to build a page that contains an interactive visualization, a filterable table, or a demo of a React component I'm open-sourcing. Even something simple (like the email newsletter signup form at the bottom of this page) was much more pleasant to implement in React; how did we use to build forms again?
+## What is this?
 
-Plus: I want access to the npm ecosystem and all my favorite UI, animation, and styling libraries. I sincerely hope I never write another line of raw CSS ever again; CSS-in-JS 4 lyfe baby. If you want to start a Twitter feud with me about this, by all means [at me](https://twitter.com/colinhacks).
+This package is a [React][] component that can be given a string of markdown
+that it’ll safely render to React elements.
+You can pass plugins to change how markdown is transformed to React elements and
+pass components that will be used instead of normal HTML elements.
 
-### Good authoring experience
+*   to learn markdown, see this [cheatsheet and tutorial][cheat]
+*   to try out `react-markdown`, see [our demo][demo]
 
-If it's obnoxious to write new blog posts, I won't do it. That's a regrettable law of the universe. Even writing blog posts with plain HTML — just a bunch of `<p>` tags in a div — is just annoying enough to bug me. The answer: Markdown of course!
+## When should I use this?
 
-Static site generators (SSGs) like Hugo and Jekyll provide an undeniably wonderful authoring experience. All you have to do is `touch` a new .md file in the proper directory and get to writing. Unfortunately all Markdown-based SSGs I know of are too restrictive. Mixing React and Markdown on the same page is either impossible or tricky. If it's possible, it likely requires some plugin/module/extension, config file, blob of boilerplate, or egregious hack. Sorry Hugo, I'm not going to re-write my React code using `React.createElement` like it's 2015.
+There are other ways to use markdown in React out there so why use this one?
+The two main reasons are that they often rely on `dangerouslySetInnerHTML` or
+have bugs with how they handle markdown.
+`react-markdown` uses a syntax tree to build the virtual dom which allows for
+updating only the changing DOM instead of completely overwriting.
+`react-markdown` is 100% CommonMark compliant and has plugins to support other
+syntax extensions (such as GFM).
 
-Well, that doesn't work for me. I want my website to be React-first, with a sprinkling of Markdown when it makes my life easier.
+These features are supported because we use [unified][], specifically [remark][]
+for markdown and [rehype][] for HTML, which are popular tools to transform
+content with plugins.
 
-### Static generation
+This package focusses on making it easy for beginners to safely use markdown in
+React.
+When you’re familiar with unified, you can use a modern hooks based alternative
+[`react-remark`][react-remark] or [`rehype-react`][rehype-react] manually.
+If you instead want to use JavaScript and JSX *inside* markdown files, use
+[MDX][].
 
-As much as I love the Jamstack, it doesn't cut it from an SEO perspective. Many blogs powered by a "headless CMS" require two round trips before rendering the blog content (one to fetch the static JS bundle and another to fetch the blog content from a CMS). This degrades page load speeds and user experience, which accordingly degrades your rankings on Google.
+## Install
 
-Instead I want every page of my site to be pre-rendered to a set of fully static assets, so I can deploy them to a CDN and get fast page loads everywhere. You could get the same benefits with server-side rendering, but that requires an actual server and worldwide load balancing to achieve comparable page load speeds. I love overengineering things as much as the next guy, even I have a line. 😅
+This package is [ESM only][esm].
+In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
 
-## My solution
-
-I describe my final architecture design below, along with my rationale for each choice. I distilled this setup into a website starter/boilerplate available here: https://github.com/colinhacks/devii. Below, I allude to certain files/functions I implemented; to see the source code of these, 
-just clone the repo `git clone git@github.com:colinhacks/devii.git`
-
-### Next.js
-
-I chose to build my site with Next.js. This won't be a surprising decision to anyone who's played with statically-rendered or server-side rendered React in recent years. Next.js is quickly eating everyone else's lunch in this market, especially Gatsby's (sorry Gatsby fans).
-
-Next.js is by far the most elegant way (for now) to do any static generation or server-side rendering with React. They just released their next-generation (pun intended) static site generator in the [9.3 release](https://nextjs.org/blog/next-9-3) back in March. So in the spirit of using technologies [in the spring of their life](https://www.youtube.com/watch?v=eBAX8MbRYFA), Next.js is a no-brainer.
-
-Here's a quick breakdown of the project structure. No need to understand every piece of it; but it may be useful to refer to throughout the rest of this post.
-
-```
-.
-├── README.md
-├── public // all static files (images, etc) go here
-├── pages // every .tsx component in this dir becomes a page of the final site
-|   ├── index.tsx // the home page (which has access to the list of all blog posts)
-|   ├── blog
-|       ├── [blog].md // a template component that renders the blog posts under `/md/blog`
-├── md
-|   ├── blog
-|       ├── devii.md // this page!
-        ├── whatever.md // every MD file in this directory becomes a blog post
-├── components
-|   ├── Code.tsx
-|   ├── Markdown.tsx
-|   ├── <various others>
-├── loader.ts // contains utility functions for loading/parsing Markdown
-├── node_modules
-├── tsconfig.json
-├── package.json
-├── next.config.js
-├── next-env.d.ts
-├── .gitignore
-```
-
-<!-- Check out the Next.js documentation [here](https://nextjs.org/docs) to make sure it's the right choice for your project. -->
-
-### TypeScript + React
-
-Both React and TypeScript are baked into the DNA of Next.js, so you get these for free when you set up a Next.js project.
-
-Gatsby, on the other hand, has a special plugin for TypeScript support, but it's not officially supported and seems to be [low on their priority list](https://github.com/gatsbyjs/gatsby/issues/18983). Also, after messing with it for an hour I couldn't get it to play nice with hot reload.
-
-### Markdown authoring
-
-Using Next's special `getStaticProps` hook and glorious [dynamic imports](https://nextjs.org/docs/advanced-features/dynamic-import#with-no-ssr), it's trivial to a Markdown file and pass its contents into your React components as a prop. This achieves the holy grail I was searching for: the ability to easily mix React and Markdown.
-
-#### Frontmatter support
-
-Every Markdown file can include a "frontmatter block" containing metadata. I implemented a simple utility function (`loadPost`) that loads a Markdown file, parses its contents, and returns a TypeScript object with the following signature:
-
-```ts
-type PostData = {
-  path: string; // the relative URL to this page, can be used as an href
-  content: string; // the body of the MD file
-  title?: string;
-  subtitle?: string;
-  date?: number;
-  author?: string;
-  authorPhoto?: string;
-  authorTwitter?: string;
-  tags?: string[];
-  bannerPhoto?: string;
-  thumbnailPhoto?: string;
-};
+```sh
+npm install react-markdown
 ```
 
-I implemented a separate function `loadPosts` that loads _all_ the Markdown files under `/md/blog` and returns them as an array (`PostData[]`). I use `loadPosts` on this site's home page to render a list of all posts I've written.
+In Deno with [`esm.sh`][esmsh]:
 
-### Medium-inspired design
-
-I used the wonderful [`react-markdown`](https://github.com/rexxars/react-markdown) package to render Markdown as a React component. My Markdown rendered component (`/components/Markdown.tsx`) provides some default styles inspired by Medium's design. Just modify the `style` pros in `Markdown.tsx` to customize the design to your liking.
-
-### GitHub-style code blocks
-
-You can easily drop code blocks into your blog posts using triple-backtick syntax. Specify the programming language with a "language tag", [just like GitHub](https://help.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks)!
-
-To achieve this I implemented a custom `code` renderer (`/components/Code.tsx`) for `react-markdown` that uses [react-syntax-highlighter](https://github.com/conorhastings/react-syntax-highlighter#readme) to handle the highlighting. So this:
-
-<!-- I landed on this solution after wasting hours playing with other options. CodeMirror has bad React support (the only React wrapper for it is inauspiciously named `react-codemirror2`) and [bizarre selection issues](https://github.com/codemirror/CodeMirror/issues/1099) for `readonly` code blocks. The popular `highlight.js` project requires you to [initialize the library](https://github.com/highlightjs/highlight.js/issues/925) in `componentDidMount` like its 2015 :/  -->
-
-<pre>
-```ts
-// pretty neat huh?
-const test = (arg: string) => {
-  return arg.length > 5;
-};
-```</pre>
-
-turns into this:
-
-```ts
-// pretty neat huh?
-const test = (arg: string) => {
-  return arg.length > 5;
-};
+```js
+import ReactMarkdown from 'https://esm.sh/react-markdown@7'
 ```
 
-### RSS feed generation
+In browsers with [`esm.sh`][esmsh]:
 
-An RSS feed is auto-generated from your blog post feed. This feed is generated using the `rss` module (for converting JSON to RSS format) and `showdown` for converting the markdown files to RSS-compatible HTML. The feed is generated during the build step and written as a static file to `/rss.xml` in your static assets folder. It's dead simple. That's the joy of being able to easily write custom build scripts on top of Next.js's `getStaticProps` hooks!
-
-### SEO
-
-Every blog post page automatically populated meta tags based on the post metadata. This includes a `title` tag, `meta` tags, `og:` tags, Twitter metadata, and a `link` tag containing the canonical URL. You can modify/augment this in the `PostMeta.ts` component.
-
-### Static generation
-
-You can generate a fully static version of your site using `yarn build && yarn export`. This step is entirely powered by Next.js. The static site is exported to the `out` directory.
-
-After its generated, use your static file hosting service of choice (Firebase Hosting, Vercel, Netlify) to deploy your site.
-
-### Insanely customizable
-
-There's nothing "under the hood" here. You can view and modify all the files that provide the functionality described above. Devii just provides a project scaffold, some Markdown-loading loading utilities (in `loader.ts`), and some sensible styling defaults (especially in `Markdown.tsx`).
-
-To start customizing, modify `index.tsx` (the home page), `Essay.tsx` (the blog post template), and `Markdown.tsx` (the Markdown renderer).
-
-## Get started
-
-Head to the GitHub repo to get started: [https://github.com/colinhacks/devii](https://github.com/colinhacks/devii). If you like this project, leave a ⭐️star⭐️ to help more people find Devii! 😎
-
-To jump straight into the code, clone the repo and start the development server like so:
-
-```bash
-git clone git@github.com:colinhacks/devii.git mysite
-cd mysite
-yarn
-yarn dev
+```html
+<script type="module">
+  import ReactMarkdown from 'https://esm.sh/react-markdown@7?bundle'
+</script>
 ```
+
+## Use
+
+A basic hello world:
+
+```jsx
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import ReactDom from 'react-dom'
+
+ReactDom.render(<ReactMarkdown># Hello, *world*!</ReactMarkdown>, document.body)
+```
+
+<details>
+<summary>Show equivalent JSX</summary>
+
+```jsx
+<h1>
+  Hello, <em>world</em>!
+</h1>
+```
+
+</details>
+
+Here is an example that shows passing the markdown as a string and how
+to use a plugin ([`remark-gfm`][gfm], which adds support for strikethrough,
+tables, tasklists and URLs directly):
+
+```jsx
+import React from 'react'
+import ReactDom from 'react-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+const markdown = `Just a link: https://reactjs.com.`
+
+ReactDom.render(
+  <ReactMarkdown children={markdown} remarkPlugins={[remarkGfm]} />,
+  document.body
+)
+```
+
+<details>
+<summary>Show equivalent JSX</summary>
+
+```jsx
+<p>
+  Just a link: <a href="https://reactjs.com">https://reactjs.com</a>.
+</p>
+```
+
+</details>
+
+## API
+
+This package exports the following identifier:
+[`uriTransformer`][uri-transformer].
+The default export is `ReactMarkdown`.
+
+### `props`
+
+*   `children` (`string`, default: `''`)\
+    markdown to parse
+*   `components` (`Record<string, Component>`, default: `{}`)\
+    object mapping tag names to React components
+*   `remarkPlugins` (`Array<Plugin>`, default: `[]`)\
+    list of [remark plugins][remark-plugins] to use
+*   `rehypePlugins` (`Array<Plugin>`, default: `[]`)\
+    list of [rehype plugins][rehype-plugins] to use
+*   `remarkRehypeOptions` (`Object?`, default: `undefined`)\
+    options to pass through to [`remark-rehype`][remark-rehype]
+*   `className` (`string?`)\
+    wrap the markdown in a `div` with this class name
+*   `skipHtml` (`boolean`, default: `false`)\
+    ignore HTML in markdown completely
+*   `sourcePos` (`boolean`, default: `false`)\
+    pass a prop to all components with a serialized position
+    (`data-sourcepos="3:1-3:13"`)
+*   `rawSourcePos` (`boolean`, default: `false`)\
+    pass a prop to all components with their [position][]
+    (`sourcePosition: {start: {line: 3, column: 1}, end:…}`)
+*   `includeElementIndex` (`boolean`, default: `false`)\
+    pass the `index` (number of elements before it) and `siblingCount` (number
+    of elements in parent) as props to all components
+*   `allowedElements` (`Array<string>`, default: `undefined`)\
+    tag names to allow (can’t combine w/ `disallowedElements`), all tag names
+    are allowed by default
+*   `disallowedElements` (`Array<string>`, default: `undefined`)\
+    tag names to disallow (can’t combine w/ `allowedElements`), all tag names
+    are allowed by default
+*   `allowElement` (`(element, index, parent) => boolean?`, optional)\
+    function called to check if an element is allowed (when truthy) or not,
+    `allowedElements` or `disallowedElements` is used first!
+*   `unwrapDisallowed` (`boolean`, default: `false`)\
+    extract (unwrap) the children of not allowed elements, by default, when
+    `strong` is disallowed, it and it’s children are dropped, but with
+    `unwrapDisallowed` the element itself is replaced by its children
+*   `linkTarget` (`string` or `(href, children, title) => string`, optional)\
+    target to use on links (such as `_blank` for `<a target="_blank"…`)
+*   `transformLinkUri` (`(href, children, title) => string`, default:
+    [`uriTransformer`][uri-transformer], optional)\
+    change URLs on links, pass `null` to allow all URLs, see [security][]
+*   `transformImageUri` (`(src, alt, title) => string`, default:
+    [`uriTransformer`][uri-transformer], optional)\
+    change URLs on images, pass `null` to allow all URLs, see [security][]
+
+### `uriTransformer`
+
+Our default URL transform, which you can overwrite (see props above).
+It’s given a URL and cleans it, by allowing only `http:`, `https:`, `mailto:`,
+and `tel:` URLs, absolute paths (`/example.png`), and hashes (`#some-place`).
+
+See the [source code here][uri].
+
+## Examples
+
+### Use a plugin
+
+This example shows how to use a remark plugin.
+In this case, [`remark-gfm`][gfm], which adds support for strikethrough, tables,
+tasklists and URLs directly:
+
+```jsx
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import ReactDom from 'react-dom'
+import remarkGfm from 'remark-gfm'
+
+const markdown = `A paragraph with *emphasis* and **strong importance**.
+
+> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
+
+* Lists
+* [ ] todo
+* [x] done
+
+A table:
+
+| a | b |
+| - | - |
+`
+
+ReactDom.render(
+  <ReactMarkdown children={markdown} remarkPlugins={[remarkGfm]} />,
+  document.body
+)
+```
+
+<details>
+<summary>Show equivalent JSX</summary>
+
+```jsx
+<>
+  <p>
+    A paragraph with <em>emphasis</em> and <strong>strong importance</strong>.
+  </p>
+  <blockquote>
+    <p>
+      A block quote with <del>strikethrough</del> and a URL:{' '}
+      <a href="https://reactjs.org">https://reactjs.org</a>.
+    </p>
+  </blockquote>
+  <ul>
+    <li>Lists</li>
+    <li>
+      <input checked={false} readOnly={true} type="checkbox" /> todo
+    </li>
+    <li>
+      <input checked={true} readOnly={true} type="checkbox" /> done
+    </li>
+  </ul>
+  <p>A table:</p>
+  <table>
+    <thead>
+      <tr>
+        <td>a</td>
+        <td>b</td>
+      </tr>
+    </thead>
+  </table>
+</>
+```
+
+</details>
+
+### Use a plugin with options
+
+This example shows how to use a plugin and give it options.
+To do that, use an array with the plugin at the first place, and the options
+second.
+[`remark-gfm`][gfm] has an option to allow only double tildes for strikethrough:
+
+```jsx
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import ReactDom from 'react-dom'
+import remarkGfm from 'remark-gfm'
+
+ReactDom.render(
+  <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}>
+    This ~is not~ strikethrough, but ~~this is~~!
+  </ReactMarkdown>,
+  document.body
+)
+```
+
+<details>
+<summary>Show equivalent JSX</summary>
+
+```jsx
+<p>
+  This ~is not~ strikethrough, but <del>this is</del>!
+</p>
+```
+
+</details>
+
+### Use custom components (syntax highlight)
+
+This example shows how you can overwrite the normal handling of an element by
+passing a component.
+In this case, we apply syntax highlighting with the seriously super amazing
+[`react-syntax-highlighter`][react-syntax-highlighter] by
+[**@conorhastings**][conor]:
+
+```jsx
+import React from 'react'
+import ReactDom from 'react-dom'
+import ReactMarkdown from 'react-markdown'
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import {dark} from 'react-syntax-highlighter/dist/esm/styles/prism'
+
+// Did you know you can use tildes instead of backticks for code in markdown? ✨
+const markdown = `Here is some JavaScript code:
+
+~~~js
+console.log('It works!')
+~~~
+`
+
+ReactDom.render(
+  <ReactMarkdown
+    children={markdown}
+    components={{
+      code({node, inline, className, children, ...props}) {
+        const match = /language-(\w+)/.exec(className || '')
+        return !inline && match ? (
+          <SyntaxHighlighter
+            children={String(children).replace(/\n$/, '')}
+            style={dark}
+            language={match[1]}
+            PreTag="div"
+            {...props}
+          />
+        ) : (
+          <code className={className} {...props}>
+            {children}
+          </code>
+        )
+      }
+    }}
+  />,
+  document.body
+)
+```
+
+<details>
+<summary>Show equivalent JSX</summary>
+
+```jsx
+<>
+  <p>Here is some JavaScript code:</p>
+  <pre>
+    <SyntaxHighlighter language="js" style={dark} PreTag="div" children="console.log('It works!')" />
+  </pre>
+</>
+```
+
+</details>
+
+### Use remark and rehype plugins (math)
+
+This example shows how a syntax extension (through [`remark-math`][math])
+is used to support math in markdown, and a transform plugin
+([`rehype-katex`][katex]) to render that math.
+
+```jsx
+import React from 'react'
+import ReactDom from 'react-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+
+import 'katex/dist/katex.min.css' // `rehype-katex` does not import the CSS for you
+
+ReactDom.render(
+  <ReactMarkdown
+    children={`The lift coefficient ($C_L$) is a dimensionless coefficient.`}
+    remarkPlugins={[remarkMath]}
+    rehypePlugins={[rehypeKatex]}
+  />,
+  document.body
+)
+```
+
+<details>
+<summary>Show equivalent JSX</summary>
+
+```jsx
+<p>
+  The lift coefficient (
+  <span className="math math-inline">
+    <span className="katex">
+      <span className="katex-mathml">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">{/* … */}</math>
+      </span>
+      <span className="katex-html" aria-hidden="true">
+        {/* … */}
+      </span>
+    </span>
+  </span>
+  ) is a dimensionless coefficient.
+</p>
+```
+
+</details>
+
+## Plugins
+
+We use [unified][], specifically [remark][] for markdown and [rehype][] for
+HTML, which are tools to transform content with plugins.
+Here are three good ways to find plugins:
+
+*   [`awesome-remark`][awesome-remark] and [`awesome-rehype`][awesome-rehype]
+    — selection of the most awesome projects
+*   [List of remark plugins][remark-plugins] and
+    [list of rehype plugins][rehype-plugins]
+    — list of all plugins
+*   [`remark-plugin`][remark-plugin] and [`rehype-plugin`][rehype-plugin] topics
+    — any tagged repo on GitHub
+
+## Syntax
+
+`react-markdown` follows CommonMark, which standardizes the differences between
+markdown implementations, by default.
+Some syntax extensions are supported through plugins.
+
+We use [`micromark`][micromark] under the hood for our parsing.
+See its documentation for more information on markdown, CommonMark, and
+extensions.
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports `Options` and `Components` types, which specify the interface of the
+accepted props and components.
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
+They work in all modern browsers (essentially: everything not IE 11).
+You can use a bundler (such as esbuild, webpack, or Rollup) to use this package
+in your project, and use its options (or plugins) to add support for legacy
+browsers.
+
+## Architecture
+
+<pre><code>                                                           react-markdown
+         +----------------------------------------------------------------------------------------------------------------+
+         |                                                                                                                |
+         |  +----------+        +----------------+        +---------------+       +----------------+       +------------+ |
+         |  |          |        |                |        |               |       |                |       |            | |
+<a href="https://commonmark.org">markdown</a>-+->+  <a href="https://github.com/remarkjs/remark">remark</a>  +-<a href="https://github.com/syntax-tree/mdast">mdast</a>->+ <a href="https://github.com/remarkjs/remark/blob/main/doc/plugins.md">remark plugins</a> +-<a href="https://github.com/syntax-tree/mdast">mdast</a>->+ <a href="https://github.com/remarkjs/remark-rehype">remark-rehype</a> +-<a href="https://github.com/syntax-tree/hast">hast</a>->+ <a href="https://github.com/rehypejs/rehype/blob/main/doc/plugins.md">rehype plugins</a> +-<a href="https://github.com/syntax-tree/hast">hast</a>->+ <a href="#appendix-b-components">components</a> +-+->react elements
+         |  |          |        |                |        |               |       |                |       |            | |
+         |  +----------+        +----------------+        +---------------+       +----------------+       +------------+ |
+         |                                                                                                                |
+         +----------------------------------------------------------------------------------------------------------------+
+</code></pre>
+
+To understand what this project does, it’s important to first understand what
+unified does: please read through the [`unifiedjs/unified`][unified] readme (the
+part until you hit the API section is required reading).
+
+`react-markdown` is a unified pipeline — wrapped so that most folks don’t need
+to directly interact with unified.
+The processor goes through these steps:
+
+*   parse markdown to mdast (markdown syntax tree)
+*   transform through remark (markdown ecosystem)
+*   transform mdast to hast (HTML syntax tree)
+*   transform through rehype (HTML ecosystem)
+*   render hast to React with components
+
+## Appendix A: HTML in markdown
+
+`react-markdown` typically escapes HTML (or ignores it, with `skipHtml`)
+because it is dangerous and defeats the purpose of this library.
+
+However, if you are in a trusted environment (you trust the markdown), and
+can spare the bundle size (±60kb minzipped), then you can use
+[`rehype-raw`][raw]:
+
+```jsx
+import React from 'react'
+import ReactDom from 'react-dom'
+import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+
+const input = `<div class="note">
+
+Some *emphasis* and <strong>strong</strong>!
+
+</div>`
+
+ReactDom.render(
+  <ReactMarkdown rehypePlugins={[rehypeRaw]} children={input} />,
+  document.body
+)
+```
+
+<details>
+<summary>Show equivalent JSX</summary>
+
+```jsx
+<div class="note">
+  <p>Some <em>emphasis</em> and <strong>strong</strong>!</p>
+</div>
+```
+
+</details>
+
+**Note**: HTML in markdown is still bound by how [HTML works in
+CommonMark][cm-html].
+Make sure to use blank lines around block-level HTML that again contains
+markdown!
+
+## Appendix B: Components
+
+You can also change the things that come from markdown:
+
+```jsx
+<ReactMarkdown
+  components={{
+    // Map `h1` (`# heading`) to use `h2`s.
+    h1: 'h2',
+    // Rewrite `em`s (`*like so*`) to `i` with a red foreground color.
+    em: ({node, ...props}) => <i style={{color: 'red'}} {...props} />
+  }}
+/>
+```
+
+The keys in components are HTML equivalents for the things you write with
+markdown (such as `h1` for `# heading`).
+Normally, in markdown, those are: `a`, `blockquote`, `br`, `code`, `em`, `h1`,
+`h2`, `h3`, `h4`, `h5`, `h6`, `hr`, `img`, `li`, `ol`, `p`, `pre`, `strong`, and
+`ul`.
+With [`remark-gfm`][gfm], you can also use: `del`, `input`, `table`, `tbody`,
+`td`, `th`, `thead`, and `tr`.
+Other remark or rehype plugins that add support for new constructs will also
+work with `react-markdown`.
+
+The props that are passed are what you probably would expect: an `a` (link) will
+get `href` (and `title`) props, and `img` (image) an `src` (and `title`), etc.
+There are some extra props passed.
+
+*   `code`
+    *   `inline` (`boolean?`)
+        — set to `true` for inline code
+    *   `className` (`string?`)
+        — set to `language-js` or so when using ` ```js `
+*   `h1`, `h2`, `h3`, `h4`, `h5`, `h6`
+    *   `level` (`number` between 1 and 6)
+        — heading rank
+*   `input` (when using [`remark-gfm`][gfm])
+    *   `checked` (`boolean`)
+        — whether the item is checked
+    *   `disabled` (`true`)
+    *   `type` (`'checkbox'`)
+*   `li`
+    *   `index` (`number`)
+        — number of preceding items (so first gets `0`, etc.)
+    *   `ordered` (`boolean`)
+        — whether the parent is an `ol` or not
+    *   `checked` (`boolean?`)
+        — `null` normally, `boolean` when using [`remark-gfm`][gfm]’s tasklists
+    *   `className` (`string?`)
+        — set to `task-list-item` when using [`remark-gfm`][gfm] and the
+        item1 is a tasklist
+*   `ol`, `ul`
+    *   `depth` (`number`)
+        — number of ancestral lists (so first gets `0`, etc.)
+    *   `ordered` (`boolean`)
+        — whether it’s an `ol` or not
+    *   `className` (`string?`)
+        — set to `contains-task-list` when using [`remark-gfm`][gfm] and the
+        list contains one or more tasklists
+*   `td`, `th` (when using [`remark-gfm`][gfm])
+    *   `style` (`Object?`)
+        — something like `{textAlign: 'left'}` depending on how the cell is
+        aligned
+    *   `isHeader` (`boolean`)
+        — whether it’s a `th` or not
+*   `tr` (when using [`remark-gfm`][gfm])
+    *   `isHeader` (`boolean`)
+        — whether it’s in the `thead` or not
+
+Every component will receive a `node` (`Object`).
+This is the original [hast](https://github.com/syntax-tree/hast) element being
+turned into a React element.
+
+Every element will receive a `key` (`string`).
+See [React’s docs](https://reactjs.org/docs/lists-and-keys.html#keys) for more
+info.
+
+Optionally, components will also receive:
+
+*   `data-sourcepos` (`string`)
+    — see `sourcePos` option
+*   `sourcePosition` (`Object`)
+    — see `rawSourcePos` option
+*   `index` and `siblingCount` (`number`)
+    — see `includeElementIndex` option
+*   `target` on `a` (`string`)
+    — see `linkTarget` option
+
+## Security
+
+Use of `react-markdown` is secure by default.
+Overwriting `transformLinkUri` or `transformImageUri` to something insecure will
+open you up to XSS vectors.
+Furthermore, the `remarkPlugins`, `rehypePlugins`, and `components` you use may
+be insecure.
+
+To make sure the content is completely safe, even after what plugins do,
+use [`rehype-sanitize`][sanitize].
+It lets you define your own schema of what is and isn’t allowed.
+
+## Related
+
+*   [`MDX`](https://github.com/mdx-js/mdx)
+    — JSX *in* markdown
+*   [`remark-gfm`](https://github.com/remarkjs/remark-gfm)
+    — add support for GitHub flavored markdown support
+*   [`react-remark`][react-remark]
+    — modern hook based alternative
+*   [`rehype-react`][rehype-react]
+    — turn HTML into React elements
+
+## Contribute
+
+See [`contributing.md`][contributing] in [`remarkjs/.github`][health] for ways
+to get started.
+See [`support.md`][support] for ways to get help.
+
+This project has a [code of conduct][coc].
+By interacting with this repository, organization, or community you agree to
+abide by its terms.
+
+## License
+
+[MIT][license] © [Espen Hovlandsdal][author]
+
+[build-badge]: https://github.com/remarkjs/react-markdown/workflows/main/badge.svg
+
+[build]: https://github.com/remarkjs/react-markdown/actions
+
+[coverage-badge]: https://img.shields.io/codecov/c/github/remarkjs/react-markdown.svg
+
+[coverage]: https://codecov.io/github/remarkjs/react-markdown
+
+[downloads-badge]: https://img.shields.io/npm/dm/react-markdown.svg
+
+[downloads]: https://www.npmjs.com/package/react-markdown
+
+[size-badge]: https://img.shields.io/bundlephobia/minzip/react-markdown.svg
+
+[size]: https://bundlephobia.com/result?p=react-markdown
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[collective]: https://opencollective.com/unified
+
+[chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
+
+[chat]: https://github.com/remarkjs/remark/discussions
+
+[npm]: https://docs.npmjs.com/cli/install
+
+[esmsh]: https://esm.sh
+
+[health]: https://github.com/remarkjs/.github
+
+[contributing]: https://github.com/remarkjs/.github/blob/HEAD/contributing.md
+
+[support]: https://github.com/remarkjs/.github/blob/HEAD/support.md
+
+[coc]: https://github.com/remarkjs/.github/blob/HEAD/code-of-conduct.md
+
+[license]: license
+
+[author]: https://espen.codes/
+
+[micromark]: https://github.com/micromark/micromark
+
+[remark]: https://github.com/remarkjs/remark
+
+[demo]: https://remarkjs.github.io/react-markdown/
+
+[position]: https://github.com/syntax-tree/unist#position
+
+[gfm]: https://github.com/remarkjs/remark-gfm
+
+[math]: https://github.com/remarkjs/remark-math
+
+[katex]: https://github.com/remarkjs/remark-math/tree/main/packages/rehype-katex
+
+[raw]: https://github.com/rehypejs/rehype-raw
+
+[sanitize]: https://github.com/rehypejs/rehype-sanitize
+
+[remark-plugins]: https://github.com/remarkjs/remark/blob/main/doc/plugins.md#list-of-plugins
+
+[rehype-plugins]: https://github.com/rehypejs/rehype/blob/main/doc/plugins.md#list-of-plugins
+
+[remark-rehype]: https://github.com/remarkjs/remark-rehype
+
+[awesome-remark]: https://github.com/remarkjs/awesome-remark
+
+[awesome-rehype]: https://github.com/rehypejs/awesome-rehype
+
+[remark-plugin]: https://github.com/topics/remark-plugin
+
+[rehype-plugin]: https://github.com/topics/rehype-plugin
+
+[cm-html]: https://spec.commonmark.org/0.30/#html-blocks
+
+[uri]: https://github.com/remarkjs/react-markdown/blob/main/lib/uri-transformer.js
+
+[uri-transformer]: #uritransformer
+
+[react]: http://reactjs.org
+
+[cheat]: https://commonmark.org/help/
+
+[unified]: https://github.com/unifiedjs/unified
+
+[rehype]: https://github.com/rehypejs/rehype
+
+[react-remark]: https://github.com/remarkjs/react-remark
+
+[rehype-react]: https://github.com/rehypejs/rehype-react
+
+[mdx]: https://github.com/mdx-js/mdx/
+
+[typescript]: https://www.typescriptlang.org
+
+[security]: #security
+
+[components]: #appendix-b-components
+
+[plugins]: #plugins
+
+[syntax]: #syntax
+
+[react-syntax-highlighter]: https://github.com/react-syntax-highlighter/react-syntax-highlighter
+
+[conor]: https://github.com/conorhastings
+
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c

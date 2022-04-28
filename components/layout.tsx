@@ -8,7 +8,7 @@ export default function Layout({ children }: ComponentProps) {
   return (
     <>
     <Meta/>
-      <div className="min-h-screen bg-gray-0">
+      <div className="min-h-screen bg-gray-1">
         <div className="h-16">
           <Nav></Nav>
         </div>

@@ -7,7 +7,7 @@ import cn from 'classnames'
 import styles from './markdown.module.css'
 export default function MarkDown({ dark, children = "" }: { children?: string, dark?: boolean }) {
     return (
-        <div className={cn("w-100 w-full",styles.markdown,dark ? styles.dark : styles.white)}>
+        <div className={cn("w-full",styles.markdown,dark ? styles.dark : styles.white)}>
             <ReactMarkdown
             
                 rehypePlugins={[rehypeRaw]}
