@@ -25,7 +25,7 @@
 
 
 .markdown {
-    @apply bg-white-0 text-gray-0 md:rounded-md;
+    @apply bg-white-0 text-gray-0 ;
 
 }
 /* link style */

@@ -14,6 +14,10 @@ module.exports = {
         'error-color':'#f5222d',
         'primary-color':'#f5f5f5'
       }
+    },
+    flex:{
+      '1': '1 1 auto',
+      '4': '4 1 auto',
     }
   },
   plugins: [],
