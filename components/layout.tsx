@@ -15,7 +15,7 @@ export default function Layout({ children }: ComponentProps) {
         <Alert />
         <main>{children}</main>
       </div>
-      <Footer></Footer>
+     
     </>
   );
 }
