@@ -11,5 +11,6 @@
         "profile":"/user/profile",
         "settings":"/app/settings",
         "message":"/user/message"
-    }
+    },
+    "safe_sites":["github.com","github.io"]
 }
