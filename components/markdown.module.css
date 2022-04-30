@@ -30,7 +30,7 @@
 }
 /* link style */
 .markdown a{
-    @apply text-blue-0;
+    @apply text-blue-0 inline-block;
 }
 .markdown a:hover{
     text-decoration-line: underline;

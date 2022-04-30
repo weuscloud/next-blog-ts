@@ -20,7 +20,7 @@ export default function IndexPage({ data, content }: RawFile) {
       <div className=" flex max-w-screen-xl mx-auto md:py-6">
         <div className={cn(styles.navBar, 'hidden md:block mr-2 ')}>11111111111111111111</div>
         <div className={cn(styles.contentBar, 'overflow-x-hidden')}>
-        <MarkDown >
+        <MarkDown dark>
             {content}
           </MarkDown>
         </div>
