@@ -28,7 +28,7 @@ export default function Card({ autoResize }: CardProps) {
                 : ""
             )}
           >
-            {t("common:description")}
+            {t("h3-brief")}
           </h3>
           <div
             className={cn(
@@ -43,9 +43,9 @@ export default function Card({ autoResize }: CardProps) {
                 autoResize ? " lg:px-8 lg:mb-0" : ""
               )}
             >
-              {t("Read Documentation")}
+              {t("a1")}
             </a>
-            <a href={appConfig.GitHub}>{t("View on GitHub")}</a>
+            <a href={appConfig.GitHub}>{t("a2")}</a>
           </div>
         </div>
       </Container>
