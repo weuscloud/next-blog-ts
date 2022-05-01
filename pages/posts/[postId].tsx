@@ -26,6 +26,7 @@ const Post: NextPage<PostData> = ({ title, content }: PostData) => {
     </Layout>
   )
 }
+
 export default Post
 
 //can get router path here

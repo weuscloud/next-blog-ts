@@ -7,7 +7,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Router from "next/router";
 import nProgress from "nprogress";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider, useSession,signIn } from "next-auth/react";
 
 import AppContext from "../lib/AppContext";
 import * as config from "../config.json";
@@ -49,8 +49,13 @@ function MyApp({
 
 function Auth({ children }: any) {
   // if `{ required: true }` is supplied, `status` can only be "loading" or "authenticated"
-  const { status } = useSession({ required: true });
-
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+     signIn("github")
+    },
+  })
+  
   const [Load, setLoading] = useState(true);
   const cLoad = () => setLoading(false);
   useTimeout(cLoad, 300);
