@@ -9,9 +9,7 @@ export default function Layout({ children }: ComponentProps) {
     <>
     <Meta/>
       <div className="min-h-screen bg-gray-1">
-        <div className="h-16">
-          <Nav></Nav>
-        </div>
+        <Nav/>
         <Alert />
         <main>{children}</main>
       </div>

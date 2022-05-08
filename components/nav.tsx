@@ -29,7 +29,8 @@ export default function NavBar() {
   }
 
   return (
-    <Disclosure as="nav" className="bg-gray-800 fixed min-w-full top-0 z-10 ">
+    <div className='h-16'>
+      <Disclosure as="nav" className="bg-gray-800 fixed min-w-full top-0 z-10 ">
       {({ open }) => (
         <>
           <Container>
@@ -180,5 +181,6 @@ export default function NavBar() {
         </>
       )}
     </Disclosure>
+    </div>
   )
 }
