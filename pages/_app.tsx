@@ -17,6 +17,9 @@ import { useState } from "react";
 import useTimeout from "../hooks/useTimeout";
 import type { NextComponentType } from "next"; //Import Component type
 
+import { Provider } from 'react-redux';
+import {store} from '../lib/store'
+
 Router.events.on("routeChangeStart", nProgress.start);
 Router.events.on("routeChangeError", nProgress.done);
 Router.events.on("routeChangeComplete", nProgress.done);
@@ -34,6 +37,7 @@ function MyApp({
 }: CustomAppProps) {
   return (
     <AppContext.Provider value={config}>
+      <Provider store={store}>
       <SessionProvider session={session}>
         {Component.auth ? (
           <Auth>
@@ -43,6 +47,8 @@ function MyApp({
           <Component {...pageProps} />
         )}
       </SessionProvider>
+      </Provider>
+      
     </AppContext.Provider>
   );
 }
