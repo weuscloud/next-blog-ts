@@ -1,0 +1,55 @@
+
+.markdown h1 {
+    @apply text-6xl ; 
+}
+
+.markdown h2 {
+    @apply text-5xl ; 
+}
+
+.markdown h3 {
+    @apply text-4xl ; 
+}
+
+.markdown h4 {
+    @apply text-3xl ; 
+}
+
+.markdown h5 {
+    @apply text-2xl ; 
+}
+
+.markdown h6 {
+    @apply text-xl ; 
+}
+
+
+.markdown {
+    @apply bg-white-0 text-gray-0 ;
+
+}
+/* link style */
+.markdown a{
+    @apply text-blue-0 inline-block;
+}
+.markdown a:hover{
+    text-decoration-line: underline;
+}
+/* spacing */
+.markdown>*{
+    @apply px-4 md:px-8 py-4;
+    @apply text-xl ;
+};
+/* dark mode */
+.markdown.dark {
+    @apply bg-gray-0 text-gray-1;
+}
+.markdown.dark h1,
+.markdown.dark h2,
+.markdown.dark h3,
+.markdown.dark h4,
+.markdown.dark h5,
+.markdown.dark h6 {
+    @apply text-gray-1;
+}
+

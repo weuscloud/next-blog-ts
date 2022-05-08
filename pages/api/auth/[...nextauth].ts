@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
-import EmailProvider from "next-auth/providers/email";
 export default NextAuth({
   // Configure one or more authentication providers
   providers: [
@@ -8,18 +7,9 @@ export default NextAuth({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
       httpOptions: {
-        timeout: 4000,
+        timeout: 5000,
       },
     }),
     //more providers
-  ],
-  callbacks: {
-    async jwt({ token, account }) {
-      // Persist the OAuth access_token to the token right after signin
-      if (account) {
-        token.accessToken = account.access_token
-      }
-      return token
-    }
-  }
+  ]
 })

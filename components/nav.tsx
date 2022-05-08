@@ -12,6 +12,7 @@ export default function NavBar() {
   const appConfig = useContext(AppContext)
   const { t } = useTranslation("nav");
   const { data: session } = useSession()
+
   const NAV = {
     navigation: [
       { name: 'articles', href: `${appConfig.links.articles}`, current: false },
@@ -90,7 +91,7 @@ export default function NavBar() {
                   </div>
                 </div>
               </div>
-              {session && (session.user?.email || session.user?.name) ? (<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              {session && (session.user?.email || session.user?.name) ? (<div className="absolute inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <button
                   type="button"
                   className="hidden md:block bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
@@ -111,7 +112,7 @@ export default function NavBar() {
                   <div>
                     <Menu.Button className="bg-gray-800 flex text-sm ">
                       <span className="sr-only">Open user menu</span>
-                      <div className="h-6 w-6 opacity-90 duration-300 hover:opacity-100">
+                      <div className="relative h-6 w-6 opacity-90 duration-300 hover:opacity-100">
                       <Image
                        layout='fill'
                        className='rounded-full'
@@ -149,7 +150,7 @@ export default function NavBar() {
                   </Transition>
                 </Menu>
               </div>) : (
-                <div className='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
+                <div className='absolute inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
                   <Link href={NAV.signIn}>
                     <a className=' px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md'>Sign In</a>
                   </Link>

@@ -1,0 +1,8 @@
+{
+    "status_safe":"此链接安全。",
+    "status_unknown":"此链接安全性未知。",
+    "status_warning":"此链接存在安全威胁或不良信息。",
+    "locate_to":"您即将跳转至 |",
+    "go":"继续",
+    "back":"返回"
+}
