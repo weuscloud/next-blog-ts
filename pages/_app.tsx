@@ -58,7 +58,7 @@ function Auth({ children }: any) {
   
   const [Load, setLoading] = useState(true);
   const cLoad = () => setLoading(false);
-  useTimeout(cLoad, 300);
+  useTimeout(cLoad, 100);
   return Load || status === "loading" ? (
     <Loading text="Authenticating." />
   ) : (
