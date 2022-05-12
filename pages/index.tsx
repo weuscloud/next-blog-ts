@@ -1,11 +1,14 @@
 import Container from "../components/container";
-import Layout from "../components/layout";
-import Meta from "../components/meta";
+import Background from "../components/view/bg";
+
 export default function IndexPage() {
-  return <Layout>
-    <Meta />
-    <Container>
-      
-    </Container>
-  </Layout>;
+  return (
+    <Background>
+    <div className="h-16 flex">
+      <Container>
+        
+      </Container>
+    </div>
+  </Background>
+  );
 }

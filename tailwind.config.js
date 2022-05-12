@@ -1,22 +1,20 @@
 module.exports = {
+  darkMode: 'class',
   content: ['./components/**/*.tsx', './pages/**/*.tsx'],
   theme: {
     extend: {
-      colors:{
-        'gray-0':"#F4F5F5",/*：背景色 */
-        'gray-1':"#FAFAFA",/*: hover 色 */
-        'gray-2':"#86909c",/*：字体色 */
-        'white-0':"#fff",
-        'accent-1': '#FAFAFA',
-        'blue-0':'#007fff',/* 蓝：字体色 */
-        'link-color':'#1890ff',
-        'success-color':'#52c41a',
-        'warning-color':'#faad14',
-        'error-color':'#f5222d',
-        'primary-color':'#f5f5f5'
+      colors: {
+        'gray-1': '#1d1d1d',
+        'gray-4': '#515151',
+        'gray-7': '#999999',
+        'gray-10': '#cbcbcb',
+        'blue-1': '#111d2c',
+        'blue-4': '#164c7e',
+        'blue-7': '#3c9ae8',
+        'blue-10': '#b7e3fa',
       }
     },
-    flex:{
+    flex: {
       '1': '1 1 auto',
       '4': '4 1 auto',
     }
