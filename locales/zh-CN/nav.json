@@ -3,5 +3,6 @@
     "about": "关于",
     "profile": "个人中心",
     "settings": "设置",
-    "sign out": "登出"
+    "sign out": "登出",
+    "signIn":"登录"
 }

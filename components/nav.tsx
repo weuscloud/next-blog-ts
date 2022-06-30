@@ -152,7 +152,7 @@ export default function NavBar() {
               </div>) : (
                 <div className='absolute inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
                   <Link href={NAV.signIn}>
-                    <a className=' px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md'>Sign In</a>
+                    <a className=' px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md'>{t('signIn')}</a>
                   </Link>
                 </div>)}
             </div>
