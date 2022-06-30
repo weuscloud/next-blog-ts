@@ -3,6 +3,7 @@ import Layout from "../components/layout";
 import Meta from "../components/meta";
 import { getAllPosts } from "../lib/io";
 import { format } from 'date-fns'
+import Footer from "../components/footer";
 export default function IndexPage({allPosts}) {
   return <Layout>
     <Meta />
@@ -11,7 +12,7 @@ export default function IndexPage({allPosts}) {
           <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl my-2 md:my-4">
         <div className="md:flex">
           <div className="md:shrink-0">
-            <img className="h-48 w-full object-cover md:h-full md:w-48" src={post.coverImage} alt="Man looking at item at a store"/>
+            <img className="h-48 w-full h-full  md:w-full  md:w-48" src={post.coverImage} alt="Man looking at item at a store"/>
           </div>
           <div className="p-8">
             <a href={"/posts/"+post.slug} className="block mt-1 text-lg leading-tight font-medium text-black hover:underline">{post.title}</a>
@@ -23,6 +24,7 @@ export default function IndexPage({allPosts}) {
         ))}
       
     </Container>
+    <Footer/>
   </Layout>;
 }
 export async function getStaticProps() {

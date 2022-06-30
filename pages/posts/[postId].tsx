@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 import Layout from "../../components/layout"
 import Container from "../../components/container"
 import { GetStaticProps, NextPage } from "next"
-import { getRawFileByPath, PostData } from "../../lib/io"
+import { getAllPosts, getRawFileByPath, PostData } from "../../lib/io"
 import MarkDown from "../../components/markdown"
 import Footer from "../../components/mdnav"
 import Meta from "../../components/meta"
@@ -51,17 +51,15 @@ console.log(params)
  */
 
 export async function getStaticPaths() {
-  const data = { postId: 'helloworld' }
-  const posts = [
-    data
-  ]
+  const data = getAllPosts(['slug'])
+
 
   return {
-    paths: posts.map((post) => {
+    paths: data.map((post) => {
       //return params of each page
       return {
         params: {
-          postId: post.postId,
+          postId: post.slug,
         },
       }
     }),
